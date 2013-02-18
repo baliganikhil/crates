@@ -34,6 +34,14 @@
 	.world .hero {
 		background: black;
 	}
+
+	.world .hero_target {
+		background: red;
+	}
+
+	.world .crate_target {
+		background: url('images/crate.png');
+	}
 </style>
 
 <div class="container">
@@ -57,6 +65,8 @@ GRASS = 1;
 TARGET = 2;
 CRATE = 3;
 HERO = 4;
+HERO_TARGET = 5;
+CRATE_TARGET = 6;
 
 LEFT = 0;
 RIGHT = 1;
@@ -104,6 +114,10 @@ function draw_map() {
 				html += "<td class='crate'></td>";
 			} else if (game_matrix[m][n] == HERO) {
 				html += "<td class='hero' data-row='" + m + "' data-col='" + n + "'></td>";
+			} else if (game_matrix[m][n] == HERO_TARGET) {
+				html += "<td class='hero_target hero' data-row='" + m + "' data-col='" + n + "'></td>";
+			} else if (game_matrix[m][n] == CRATE_TARGET) {
+				html += "<td class='crate_target' data-row='" + m + "' data-col='" + n + "'></td>";
 			}
 		}
 
@@ -128,7 +142,7 @@ $(document).keydown(function(event) {
 		heros_left = get_heros_left();
 
 		if (heros_left == GRASS) {
-			move_hero_to_grass(get_hero_x(), get_hero_y(), get_hero_x(), get_hero_y() - 1)
+			move_hero_to_grass(get_hero_x(), get_hero_y(), get_hero_x(), get_hero_y() - 1);
 		} else if (heros_left == CRATE) {
 			heros_left_left = get_heros_left_left();
 
@@ -136,6 +150,8 @@ $(document).keydown(function(event) {
 				push_crate(get_hero_x(), get_hero_y() - 1, LEFT);	
 			}
 			
+		} else if (heros_left == TARGET) {
+			move_hero_to_target(get_hero_x(), get_hero_y(), get_hero_x(), get_hero_y() - 1);
 		}
 
 
@@ -210,9 +226,35 @@ $(document).keydown(function(event) {
 	draw_map();
 });
 
+function is_hero_on_grass() {
+	hero_x = get_hero_x();
+	hero_y = get_hero_y();
+
+	if (game_matrix[hero_x][hero_y] == HERO_TARGET) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
 function move_hero_to_grass(old_x, old_y, new_x, new_y) {
+	if (is_hero_on_grass()) {
+		game_matrix[old_x][old_y] = GRASS;	
+	} else {
+		game_matrix[old_x][old_y] = TARGET;
+	}
+
 	game_matrix[new_x][new_y] = HERO;
+
+	set_hero_pos(new_x, new_y);
+	
+}
+
+function move_hero_to_target(old_x, old_y, new_x, new_y) {
+	game_matrix[new_x][new_y] = HERO_TARGET;
 	game_matrix[old_x][old_y] = GRASS;
+
+	set_hero_pos(new_x, new_y);
 }
 
 function push_crate(crate_x, crate_y, direction) {
@@ -270,6 +312,20 @@ function get_hero_x() {
 function get_hero_y() {
 	return $('.hero').data('col');
 }
+
+function set_hero_x(value) {
+	$('.hero').data('row', value);
+}
+
+function set_hero_y(value) {
+	$('.hero').data('col', value);
+}
+
+function set_hero_pos(x, y) {
+	set_hero_x(x);
+	set_hero_y(y);
+}
+
 
 function get_heros_left() {
 	if (is_hero_on_left_edge()) {
@@ -391,6 +447,14 @@ function get_item_at_cell(x, y) {
 
 		case HERO:
 			return HERO;
+			break;
+
+		case HERO_TARGET:
+			return HERO_TARGET;
+			break;
+
+		case CRATE_TARGET:
+			return CRATE_TARGET;
 			break;
 
 		default:
