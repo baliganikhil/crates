@@ -19,38 +19,80 @@
 		width: 40px;
 	}
 
-	.world .grass {
+	.grass {
 		background: url('images/grass.png');
 	}
 
-	.world .crate {
+	.crate {
 		background: url('images/crate.png');
 	}
 
-	.world .target {
+	.target {
 		background: url('images/target.png');
 	}
 
-	.world .hero {
+	.hero {
 		background: url('images/hero.png');
 	}
 
-	.world .hero_left {
+	.hero_left {
 		background: url('images/hero_left.png');
 	}
 
-	.world .hero_target {
+	.hero_target {
 		background: url('images/hero_target.png');
 	}
 
-	.world .crate_target {
+	.crate_target {
 		background: url('images/crate.png');
+	}
+
+	#create_world .btn_item {
+		height: 40px;
+		width: 40px;
+		border-radius: 5;
+		margin-right: 10px;
+		box-shadow: 5px 5px 5px silver;
+	}
+
+	#create_world ul li {
+		list-style-type: none;
+		display: inline-block;
+	}
+
+	#world_editor .active_cell {
+		border: solid 1px red;
 	}
 </style>
 
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Crates</a>
+    <ul class="nav">
+      <li class="active"><a href="#">Home</a></li>
+      <li><a href="#">Create World</a></li>
+      <li><a href="#">Help</a></li>
+      <li><a href="#">About</a></li>
+    </ul>
+  </div>
+</div>
+
 <div class="container">
 
-<div class="well" id="game_area"></div>
+<div class="well hide" id="game_area"></div>
+
+<div id="create_world">
+	<div class="well">
+		<ul>
+			<li class="btn_item wall" data-control="wall"></li>
+			<li class="btn_item grass" data-control="grass"></li>
+			<li class="btn_item crate" data-control="crate"></li>
+			<li class="btn_item target" data-control="target"></li>
+			<li class="btn_item hero" data-control="hero"></li>
+		</ul>
+	</div>
+	<div id="world_editor"></div>
+</div>
 
 </div>
 
@@ -77,6 +119,12 @@ RIGHT = 1;
 UP = 2;
 DOWN = 3;
 
+MODE_DESIGN = 'design';
+MODE_GAME = 'game';
+
+mode = MODE_DESIGN;
+is_game_running = false;
+
 game_matrix = [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -90,9 +138,19 @@ game_matrix = [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 ];
 
+function new_game() {
+	is_game_running = true;
+	mode = MODE_GAME;
+	draw_map();
+}
+
 function draw_map() {
 	var world_width = map_width + 2;
 	var world_height = map_height + 2;
+
+	if (mode == null || mode == '') {
+		mode = MODE_GAME;
+	}
 
 	// Prepare world
 
@@ -131,12 +189,24 @@ function draw_map() {
 
 	html += "</table>";
 
-
-	$('#game_area').html(html);
+	if (mode == MODE_GAME) {
+		$('#game_area').html(html);	
+	} else if (mode == MODE_DESIGN) {
+		$('#world_editor').html(html);	
+	}
+	
 }
 
 $(document).keydown(function(event) {
 	key = event.which;
+
+	if (mode == MODE_DESIGN) {
+		return;
+	}
+
+	if (false == is_game_running) {
+		return;
+	}
 
 	if(key == LEFT_ARROW) {
 
@@ -237,7 +307,8 @@ $(document).keydown(function(event) {
 	draw_map();
 
 	if(check_if_game_over()) {
-		alert("You win!")
+		alert("You win!");
+		is_game_running = false;
 	}
 });
 
@@ -526,6 +597,22 @@ function check_if_game_over() {
 
 	return true;
 }
+
+// World Editor
+$('#world_editor').on('click', 'td', function() {
+	$(this).toggleClass('active_cell');
+});
+
+$('#create_world .btn_item').on('click', function() {
+	$('#world_editor td.active_cell').removeClass('wall');
+	$('#world_editor td.active_cell').removeClass('grass');
+	$('#world_editor td.active_cell').removeClass('target');
+	$('#world_editor td.active_cell').removeClass('crate');
+	$('#world_editor td.active_cell').removeClass('hero');
+
+	$('#world_editor td.active_cell').addClass($(this).data('control'));
+	$('#world_editor td').removeClass('active_cell');
+});
 
 </script>
 
