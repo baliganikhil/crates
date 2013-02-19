@@ -70,29 +70,53 @@
     <a class="brand" href="#">Crates</a>
     <ul class="nav">
       <li class="active"><a href="#">Home</a></li>
-      <li><a href="#">Create World</a></li>
+      <li id="btn_create_word"><a href="#">Create World</a></li>
       <li><a href="#">Help</a></li>
       <li><a href="#">About</a></li>
     </ul>
   </div>
 </div>
 
-<div class="container">
+<div class="">
 
-<div class="well hide" id="game_area"></div>
+<section id="section_game" class="">
+	<div class="well span4">
+		<button class="btn btn-large btn-primary" id="btn_restart"><i class='icon-repeat icon-white'></i> Restart</button>
 
-<div id="create_world">
-	<div class="well">
-		<ul>
-			<li class="btn_item wall" data-control="wall"></li>
-			<li class="btn_item grass" data-control="grass"></li>
-			<li class="btn_item crate" data-control="crate"></li>
-			<li class="btn_item target" data-control="target"></li>
-			<li class="btn_item hero" data-control="hero"></li>
-		</ul>
+		<hr>
+		<div>
+			<h4>Time</h4>
+			<h3 id="timer_value">00 : 00</h3>
+		</div>
+
+		<hr>
+		<div>
+			<h4>Moves</h4>
+			<h3 id="no_of_moves">0</h3>
+		</div>
 	</div>
-	<div id="world_editor"></div>
-</div>
+	<div class="span8" id="game_area"></div>
+</section>
+
+<section id="section_design" class="hide">
+	<div id="create_world">
+		<div class="well">
+			<div>
+				<ul>
+					<li class="btn_item wall" data-control="wall"></li>
+					<li class="btn_item grass" data-control="grass"></li>
+					<li class="btn_item crate" data-control="crate"></li>
+					<li class="btn_item target" data-control="target"></li>
+					<li class="btn_item hero" data-control="hero"></li>
+				</ul>
+			</div>
+			<div>
+				<button class="btn btn-large btn-primary" id="btn_test">Proceed to Test</button>
+			</div>
+		</div>
+		<div id="world_editor" class="span12"></div>
+	</div>
+</section>
 
 </div>
 
@@ -121,9 +145,17 @@ DOWN = 3;
 
 MODE_DESIGN = 'design';
 MODE_GAME = 'game';
+MODE = 'test';
 
-mode = MODE_DESIGN;
+mode = MODE_GAME;
 is_game_running = false;
+
+timer_interval = null;
+timer_value = "";
+
+moves_made = 0;
+
+test_game_matrix = [];
 
 game_matrix = [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -142,6 +174,33 @@ function new_game() {
 	is_game_running = true;
 	mode = MODE_GAME;
 	draw_map();
+
+	timer_value = 0;
+	clearInterval(timer_interval);
+	timer_interval = setInterval(update_timer, 1000);
+
+	moves_made = 0;
+}
+
+function update_timer() {
+	timer_value += 1;
+
+	min = Math.floor(timer_value / 60);
+	sec = timer_value % 60;
+
+	if (min < 10) {
+		min = "0" + min;
+	}
+
+	if (sec < 10) {
+		sec = "0" + sec;
+	}
+
+	$('#timer_value').text(min + " : " + sec);
+}
+
+function update_moves() {
+	$('#no_of_moves').text(moves_made);
 }
 
 function draw_map() {
@@ -207,6 +266,9 @@ $(document).keydown(function(event) {
 	if (false == is_game_running) {
 		return;
 	}
+
+	moves_made += 1;
+	update_moves();
 
 	if(key == LEFT_ARROW) {
 
@@ -309,6 +371,7 @@ $(document).keydown(function(event) {
 	if(check_if_game_over()) {
 		alert("You win!");
 		is_game_running = false;
+		clearInterval(timer_interval);
 	}
 });
 
@@ -613,6 +676,107 @@ $('#create_world .btn_item').on('click', function() {
 	$('#world_editor td.active_cell').addClass($(this).data('control'));
 	$('#world_editor td').removeClass('active_cell');
 });
+
+$('#btn_restart').on('click', function() {
+	new_game();
+});
+
+$('#btn_create_word').on('click', function() {
+	$('#section_game').hide();
+	$('#section_design').show();
+
+	mode = MODE_DESIGN;
+	draw_map();
+});
+
+$('#btn_test').on('click', function() {
+	if(!validate_design()) {
+		return;
+	}
+
+	game_matrix = $.extend(true, [], test_game_matrix);
+
+	$('#section_game').show();
+	$('#section_design').hide();
+
+	new_game();
+});
+
+function validate_design() {
+	var hero_count = 0;
+	var target_count = 0;
+	var crate_count = 0;
+	var wall_count = 0;
+	var grass_count = 0;
+
+	var valid = true;
+
+	test_game_matrix = [];
+
+	$('#world_editor .world tr').each(function(tkey, trow) {
+		var cur_row = [];
+
+		if (tkey == 0 || tkey == map_height + 1) {
+			return true;
+		}
+
+		$(trow).find('td').each(function(key, cell) {
+			if (key == 0 || key == map_width + 1) {
+				return true;
+			}
+
+			if ($(this).hasClass('wall')) {
+				wall_count++;
+				cur_row.push(WALL);
+			} else if ($(this).hasClass('grass')) {
+				grass_count++;
+				cur_row.push(GRASS);
+			} else if ($(this).hasClass('crate')) {
+				crate_count++;
+				cur_row.push(CRATE);
+			} else if ($(this).hasClass('hero')) {
+				hero_count++;
+				cur_row.push(HERO);
+			} else if ($(this).hasClass('target')) {
+				target_count++;
+				cur_row.push(TARGET);
+			}
+				
+			if (hero_count > 1) {
+				valid = false;
+				alert("Cannot have two playable characters");
+				return false;
+			}
+
+		});
+
+		if (!valid) {
+			return false;
+		} else {
+			test_game_matrix.push(cur_row);
+		}
+
+
+	});
+
+	if (target_count != crate_count && valid) {
+		valid = false;
+		alert("Number of crates and number of targets should match");
+	} else if (target_count == 0) {
+		valid = false;
+		alert("This game has no objectives! Please add at least one target and one crate");
+	} else if (hero_count == 0) {
+		valid = false;
+		alert("Must have at least one playable character");
+		return false;
+	}
+
+	if (!valid) {
+		return false;
+	} else {
+		return true;
+	}
+}
 
 </script>
 
