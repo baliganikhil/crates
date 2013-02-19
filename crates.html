@@ -70,7 +70,7 @@
     <a class="brand" href="#">Crates</a>
     <ul class="nav">
       <li class="active"><a href="#">Home</a></li>
-      <li id="btn_create_word"><a href="#">Create World</a></li>
+      <li id="btn_create_world"><a href="#">Create World</a></li>
       <li><a href="#">Help</a></li>
       <li><a href="#">About</a></li>
     </ul>
@@ -157,22 +157,27 @@ moves_made = 0;
 
 test_game_matrix = [];
 
-game_matrix = [
+original_game_matrix = [
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1, 2, 1, 1, 1, 1],
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	[0, 0, 0, 0, 0, 1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	[1, 1, 3, 3, 1, 1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-	[1, 1, 1, 1, 1, 4, 1, 1, 2, 1],
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+	[0, 0, 0, 0, 0, 0, 0, 1, 1, 1],
+	[1, 4, 1, 1, 1, 0, 0, 1, 1, 1],
+	[1, 1, 3, 1, 1, 0, 0, 1, 1, 1],
+	[0, 0, 1, 0, 1, 0, 0, 1, 1, 1],
+	[2, 0, 1, 0, 1, 1, 0, 1, 1, 1],
+	[2, 3, 1, 1, 0, 1, 0, 1, 1, 1],
+	[2, 1, 1, 1, 3, 1, 0, 1, 1, 1]
 ];
+
+game_matrix = [];
 
 function new_game() {
 	is_game_running = true;
 	mode = MODE_GAME;
+
+	game_matrix = $.extend(true, [], original_game_matrix);
+
 	draw_map();
 
 	timer_value = 0;
@@ -414,7 +419,13 @@ function move_hero_to_grass(old_x, old_y, new_x, new_y) {
 
 function move_hero_to_target(old_x, old_y, new_x, new_y) {
 	game_matrix[new_x][new_y] = HERO_TARGET;
-	game_matrix[old_x][old_y] = GRASS;
+	
+
+	if (is_hero_on_grass()) {
+		game_matrix[old_x][old_y] = GRASS;	
+	} else {
+		game_matrix[old_x][old_y] = TARGET;
+	}
 
 	set_hero_pos(new_x, new_y);
 }
@@ -681,9 +692,19 @@ $('#btn_restart').on('click', function() {
 	new_game();
 });
 
-$('#btn_create_word').on('click', function() {
+$('#btn_create_world').on('click', function() {
 	$('#section_game').hide();
 	$('#section_design').show();
+
+	// Prepare blank world
+	game_matrix = [];
+	for (i = 0; i < map_height; i++) {
+		cur_row = [];
+		for (j = 0; j < map_width; j++) {
+			cur_row.push(GRASS);
+		}
+		game_matrix.push(cur_row);
+	}
 
 	mode = MODE_DESIGN;
 	draw_map();
