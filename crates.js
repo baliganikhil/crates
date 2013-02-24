@@ -105,6 +105,18 @@ all_levels = [
 
  	[
  	[1,1,1,0,0,1,1,0,0,0],[1,0,1,3,1,3,1,0,0,0],[1,1,6,2,0,1,1,0,0,0],[0,1,0,2,4,2,0,0,0,0],[0,3,0,0,0,6,0,0,0,0],[1,1,1,1,1,1,1,1,0,0],[1,1,1,0,0,1,0,1,0,0],[0,0,0,0,0,1,1,1,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]
+ 	],
+
+ 	[
+ 	[0,0,0,1,1,1,0,0,1,1],[0,0,0,1,3,3,0,0,1,1],[0,0,0,4,1,1,0,0,1,1],[1,1,1,6,0,3,0,0,1,1],[1,3,2,3,2,1,2,0,1,1],[1,1,0,2,0,2,0,0,1,1],[0,0,0,0,0,0,0,0,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1]
+ 	],
+
+ 	[
+ 	[2,1,2,1,2,0,1,1,1,1],[1,3,3,3,1,0,1,1,1,1],[6,1,1,3,2,0,1,1,1,1],[1,4,3,3,1,0,1,1,1,1],[2,3,2,1,2,0,1,1,1,1],[0,0,0,0,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1]
+ 	],
+
+ 	[
+ 	[1,1,1,1,2,6,5,1,1,1],[1,3,3,3,6,6,6,1,3,1],[1,1,1,1,2,2,2,1,3,1],[0,0,0,0,0,0,0,0,0,0],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1]
  	]
 
 ];
@@ -624,6 +636,8 @@ $('#create_world .btn_item').on('click', function() {
 	$('#world_editor td.active_cell').removeClass('target');
 	$('#world_editor td.active_cell').removeClass('crate');
 	$('#world_editor td.active_cell').removeClass('hero');
+	$('#world_editor td.active_cell').removeClass('hero_target');
+	$('#world_editor td.active_cell').removeClass('crate_target');
 
 	$('#world_editor td.active_cell').addClass($(this).data('control'));
 	$('#world_editor td').removeClass('active_cell');
@@ -710,6 +724,14 @@ function validate_design() {
 			} else if ($(this).hasClass('target')) {
 				target_count++;
 				cur_row.push(TARGET);
+			} else if ($(this).hasClass('hero_target')) {
+				target_count++;
+				hero_count++;
+				cur_row.push(HERO_TARGET);
+			} else if ($(this).hasClass('crate_target')) {
+				target_count++;
+				crate_count++;
+				cur_row.push(CRATE_TARGET);
 			}
 				
 			if (hero_count > 1) {
@@ -727,6 +749,8 @@ function validate_design() {
 		}
 
 	});
+
+	console.log(target_count + "  " + crate_count);
 
 	if (target_count != crate_count && valid) {
 		valid = false;
