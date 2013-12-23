@@ -14,7 +14,7 @@ var player_schema = mongoose.Schema({
 
 var level_schema = mongoose.Schema({
     name: String,
-    matrix: [[Number]],
+    matrix: [],
     rating: Number,
     num_ratings: Number,
     sum_ratings: Number,
@@ -23,7 +23,7 @@ var level_schema = mongoose.Schema({
 });
 
 var solved_schema = mongoose.Schema({
-    level_id: Schema.Types.ObjectId,
+    level_id: mongoose.Schema.Types.ObjectId,
     solved_by: String
 });
 

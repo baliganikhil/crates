@@ -3,6 +3,8 @@ var fs = require("fs");
 
 var server = http.createServer(function(req, res) {
    res.writeHeader(200, {"Content-type": "text/html"});
+   res.write("NODE!");
+   res.end();
 
     fs.readFile("./" + req.url, "binary",  function(err, file) {
         if (err) {
@@ -15,5 +17,3 @@ var server = http.createServer(function(req, res) {
     });
 
 });
-
-server.listen(80);
