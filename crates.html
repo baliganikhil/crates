@@ -8,11 +8,11 @@
 <body>
 
 	<script>(function(d, s, id) {
-  var js, fjs = d.getElementsByTagName(s)[0];
+  /*var js, fjs = d.getElementsByTagName(s)[0];
   if (d.getElementById(id)) return;
   js = d.createElement(s); js.id = id;
   js.src = "//connect.facebook.net/en_GB/all.js#xfbml=1&appId=437640756301969";
-  fjs.parentNode.insertBefore(js, fjs);
+  fjs.parentNode.insertBefore(js, fjs);*/
 }(document, 'script', 'facebook-jssdk'));</script>
 
 <script type="text/javascript">
@@ -37,6 +37,12 @@
       <li id="btn_create_world"><a href="#">Create World</a></li>
       <li id="btn_help"><a href="#">Help</a></li>
       <li id="btn_about"><a href="#">About</a></li>
+      <li><!--
+  Below we include the Login Button social plugin. This button uses the JavaScript SDK to
+  present a graphical Login button that triggers the FB.login() function when clicked. -->
+
+		<fb:login-button show-faces="true" width="200" max-rows="1" onclick="login()"></fb:login-button>
+	   </li>
     </ul>
   </div>
 </div>
@@ -125,6 +131,38 @@
 </div>
 
 <script type="text/javascript" src="crates.js"></script>
+
+
+<div id="fb-root"></div>
+      <script>
+        window.fbAsyncInit = function() {
+          FB.init({
+            appId      : '548610865234009',
+            status     : true,
+            cookie     : true,
+            xfbml      : true,
+            oauth      : true,
+          });
+        };
+        (function(d){
+           var js, id = 'facebook-jssdk'; if (d.getElementById(id)) {return;}
+           js = d.createElement('script'); js.id = id; js.async = true;
+           js.src = "//connect.facebook.net/en_US/all.js";
+           d.getElementsByTagName('head')[0].appendChild(js);
+         }(document));
+
+       //LOGIN FUNCTION
+       function login() {
+        FB.login(function(response) {
+            if (response.authResponse) {
+                alert('Success!');
+            }else{
+                alert('Login Failed!');
+            }
+        }, {scope: 'email'});
+     }
+      </script>
+      <div onclick="login();">Login with Facebook</div>
 
 </body>
 </html>
