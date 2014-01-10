@@ -22,7 +22,7 @@ DOWN = 3;
 
 MODE_DESIGN = 'design';
 MODE_GAME = 'game';
-MODE = 'test';
+MODE_TEST = 'test';
 
 mode = MODE_GAME;
 is_game_running = false;
@@ -62,15 +62,15 @@ all_levels = [
 	],
 
 	[
-	[0, 1, 1, 1, 1, 0, 0, 1, 1, 1], 
-	[1, 4, 3, 3, 3, 1, 0, 1, 1, 1], 
-	[2, 2, 2, 2, 2, 2, 0, 1, 1, 1], 
-	[1, 3, 3, 1, 3, 1, 0, 1, 1, 1], 
-	[0, 0, 1, 1, 0, 0, 0, 1, 1, 1], 
-	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], 
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
-	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1], 
+	[0, 1, 1, 1, 1, 0, 0, 1, 1, 1],
+	[1, 4, 3, 3, 3, 1, 0, 1, 1, 1],
+	[2, 2, 2, 2, 2, 2, 0, 1, 1, 1],
+	[1, 3, 3, 1, 3, 1, 0, 1, 1, 1],
+	[0, 0, 1, 1, 0, 0, 0, 1, 1, 1],
+	[0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
 	[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 	],
 
@@ -94,7 +94,7 @@ all_levels = [
  	[
  	[2,2,3,2,2,0,1,1,1,1],[2,2,0,6,2,0,1,1,1,1],[1,3,3,1,1,0,1,1,1,1],[1,1,3,3,1,0,1,1,1,1],[1,3,3,4,1,0,1,1,1,1],[1,1,0,1,1,0,1,1,1,1],[0,0,0,0,0,0,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1]
  	],
- 	
+
  	[
  	[0,1,1,0,0,2,1,1,1,0],[0,1,1,0,1,2,0,0,1,0],[0,1,1,3,5,2,1,1,1,0],[0,1,1,0,1,2,0,1,0,0],[0,0,3,0,1,1,0,1,1,0],[1,3,1,1,1,1,3,3,1,0],[1,0,1,0,1,1,0,1,1,0],[1,1,1,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0,0]
  	],
@@ -125,9 +125,9 @@ original_game_matrix = [];
 
 game_matrix = [];
 
-function new_game() {
+function new_game(new_mode) {
 	is_game_running = true;
-	mode = MODE_GAME;
+	mode = new_mode;
 
 	game_matrix = $.extend(true, [], original_game_matrix);
 
@@ -206,12 +206,12 @@ function draw_map() {
 
 	html += "</table>";
 
-	if (mode == MODE_GAME) {
-		$('#game_area').html(html);	
+	if (mode == MODE_GAME || mode == MODE_TEST) {
+		$('#game_area').html(html);
 	} else if (mode == MODE_DESIGN) {
-		$('#world_editor').html(html);	
+		$('#world_editor').html(html);
 	}
-	
+
 }
 
 $(document).keydown(function(event) {
@@ -330,6 +330,10 @@ $(document).keydown(function(event) {
 		alert("You win!");
 		is_game_running = false;
 		clearInterval(timer_interval);
+
+		if (mode == MODE_TEST) {
+			$('.div_solvable').show();
+		}
 	}
 });
 
@@ -372,10 +376,10 @@ function move_hero_to_grass(old_x, old_y, new_x, new_y) {
 
 function move_hero_to_target(old_x, old_y, new_x, new_y) {
 	game_matrix[new_x][new_y] = HERO_TARGET;
-	
+
 
 	if (is_hero_on_grass()) {
-		game_matrix[old_x][old_y] = GRASS;	
+		game_matrix[old_x][old_y] = GRASS;
 	} else {
 		game_matrix[old_x][old_y] = TARGET;
 	}
@@ -644,7 +648,7 @@ $('#create_world .btn_item').on('click', function() {
 });
 
 $('#btn_restart').on('click', function() {
-	new_game();
+	new_game(MODE_GAME);
 });
 
 $('#btn_create_world').on('click', function() {
@@ -676,14 +680,25 @@ $('#btn_test').on('click', function() {
 	}
 
 	$('#generated_matrix').html("<h4>Generated Matrix</h4>" + JSON.stringify(test_game_matrix));
-	return;
+	// return;
 
-	game_matrix = $.extend(true, [], test_game_matrix);
+	original_game_matrix = $.extend(true, [], test_game_matrix);
 
 	$('#section_game').show();
 	$('#section_design').hide();
 
-	new_game();
+	$('.side_panel_test').show();
+	$('.side_panel_normal').hide();
+
+	$('.div_solvable').hide();
+
+	new_game(MODE_TEST);
+});
+
+$('#btn_return_design').on('click', function() {
+	mode = MODE_DESIGN;
+	$('#section_game').hide();
+	$('#section_design').show();
 });
 
 function validate_design() {
@@ -733,7 +748,7 @@ function validate_design() {
 				crate_count++;
 				cur_row.push(CRATE_TARGET);
 			}
-				
+
 			if (hero_count > 1) {
 				valid = false;
 				alert("Cannot have two playable characters");
@@ -778,7 +793,7 @@ $('#btn_help').on('click', function() {
 $(document).ready(function() {
 	original_game_matrix = $.extend(true, [], all_levels[0]);
 	populate_level_dd();
-	new_game();
+	new_game(MODE_GAME);
 });
 
 function populate_level_dd() {
@@ -795,5 +810,5 @@ $('#btn_about').on('click', function() {
 
 $('#dd_levels').on('click', function() {
 	original_game_matrix = $.extend(true, [], all_levels[$(this).val()]);
-	new_game();
+	new_game(MODE_GAME);
 });

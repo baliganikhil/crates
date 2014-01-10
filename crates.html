@@ -50,7 +50,7 @@
 <div class="">
 
 <section id="section_game" class="">
-	<div class="well span4">
+	<div class="well span4 side_panel_normal">
 		<button class="btn btn-large btn-primary" id="btn_restart"><i class='icon-repeat icon-white'></i> Restart</button>
 
 		<hr>
@@ -73,6 +73,17 @@
 			<div class="fb-like" data-href="http://nikhilbaliga.com/crates/crates.html" data-send="true" data-width="200" data-show-faces="true"></div>
 		</div>
 	</div>
+
+  <div class="well span4 side_panel_test hide">
+    <button class="btn btn-large btn-primary" id="btn_return_design"><i class='icon-repeat icon-white'></i> Return to Design</button>
+
+    <div class="div_solvable">
+      <h4>Your game is solvable</h4>
+      <button class="btn btn-success">Publish</button>
+    </div>
+
+  </div>
+
 	<div class="span8" id="game_area"></div>
 </section>
 
@@ -91,7 +102,8 @@
 				</ul>
 			</div>
 			<div>
-				<button class="btn btn-large btn-primary" id="btn_test">Generate</button>
+        <button class="btn btn-large btn-primary" id="btn_test">Test</button>
+				<!-- <button class="btn btn-large btn-primary" id="btn_test">Generate</button> -->
 			</div>
 		</div>
 		<div id="world_editor" class="span8"></div>
@@ -113,7 +125,7 @@
 <div class="modal hide fade">
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Help [Crates]</h3>
+    <h3>Help</h3>
   </div>
   <div class="modal-body">
     <p>
