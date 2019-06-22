@@ -1,0 +1,65 @@
+#game_area {
+
+}
+
+.wall {
+	background: url('images/brick.png');
+}
+
+.world td {
+	height: 40px;
+	width: 40px;
+}
+
+.grass {
+	background: url('images/grass.png');
+}
+
+.crate {
+	background: url('images/crate.png');
+}
+
+.target {
+	background: url('images/target.png');
+}
+
+.hero {
+	background: url('images/hero.png');
+}
+
+.hero_left {
+	background: url('images/hero_left.png');
+}
+
+.hero_target {
+	background: url('images/hero_target.png');
+}
+
+.crate_target {
+	background: url('images/crate_target.png');
+}
+
+#create_world .btn_item {
+	height: 40px;
+	width: 40px;
+	border-radius: 5;
+	margin-right: 10px;
+	box-shadow: 5px 5px 5px silver;
+}
+
+#create_world ul li {
+	list-style-type: none;
+	display: inline-block;
+}
+
+#world_editor .active_cell {
+	border: solid 1px red;
+}
+
+.div_solvable {
+	margin-top: 30px;
+	border-top: solid 1px #ccc;
+	padding-top: 20px;
+	text-align: center;
+	display: none;
+}

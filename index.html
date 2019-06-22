@@ -1,0 +1,115 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="/bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="/css/crates.css">
+	<script type="text/javascript" src="/startup_files/jquery-1.9.0.min.js"></script>
+	<script type="text/javascript" src="/bootstrap/js/bootstrap.js"></script>
+</head>
+<body>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <a class="brand" href="#">Crates</a>
+    <ul class="nav">
+      <li id="btn_home" class="active"><a href="#">Home</a></li>
+      <li id="btn_create_world"><a href="#">Create World</a></li>
+      <li id="btn_help"><a href="#">Help</a></li>
+      <li id="btn_about"><a href="#">About</a></li>
+    </ul>
+  </div>
+</div>
+
+<div class="">
+
+<section id="section_game" class="">
+	<div class="well span4 side_panel_normal">
+		<button class="btn btn-large btn-primary" id="btn_restart"><i class='icon-repeat icon-white'></i> Restart</button>
+
+		<hr>
+			<h4>Level</h4>
+			<select id="dd_levels"></select>
+		<hr>
+		<div>
+			<h4>Time</h4>
+			<h3 id="timer_value">00 : 00</h3>
+		</div>
+
+		<hr>
+		<div>
+			<h4>Moves</h4>
+			<h3 id="no_of_moves">0</h3>
+		</div>
+	</div>
+
+  <div class="well span4 side_panel_test hide">
+    <button class="btn btn-large btn-primary" id="btn_return_design"><i class='icon-repeat icon-white'></i> Return to Design</button>
+
+    <div class="div_solvable">
+      <h4>Your game is solvable</h4>
+      <button class="btn btn-success">Publish</button>
+    </div>
+
+  </div>
+
+	<div class="span8" id="game_area"></div>
+</section>
+
+<section id="section_design" class="hide">
+	<div id="create_world">
+		<div class="well">
+			<div>
+				<ul>
+					<li class="btn_item wall" data-control="wall"></li>
+					<li class="btn_item grass" data-control="grass"></li>
+					<li class="btn_item crate" data-control="crate"></li>
+					<li class="btn_item target" data-control="target"></li>
+					<li class="btn_item hero" data-control="hero"></li>
+					<li class="btn_item hero_target" data-control="hero_target"></li>
+					<li class="btn_item crate_target" data-control="crate_target"></li>
+				</ul>
+			</div>
+			<div>
+        <button class="btn btn-large btn-primary" id="btn_test">Test</button>
+				<!-- <button class="btn btn-large btn-primary" id="btn_test">Generate</button> -->
+			</div>
+		</div>
+		<div id="world_editor" class="span8"></div>
+		<div id="world_editor" class="span4">
+			<h3>How to create worlds?</h3>
+				Click on the map to select cells. Click again to deselect <p>
+				Choose item from the toolbar above to add it to the map <p>
+				Once you are done, click on Generate <p>
+				Send the generated matrix to <h4>baliganikhil [at] gmail [dot] com</h4> <p>
+				This process will be automated with login later. For now, it's beta :-)
+				<hr>
+				<div id="generated_matrix"></div>
+		</div>
+	</div>
+</section>
+
+</div>
+
+<div class="modal hide fade">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Help</h3>
+  </div>
+  <div class="modal-body">
+    <p>
+    	The objective is simple. Cover the targets (golden circles) with the crates. <p>
+    	Move the hero by using the keyboard keys up, down, left and right
+    	</p>
+
+    	<p>Crates - By Nikhil Baliga (baliganikhil [at] gmail [dot] com) - Send in your comments and suggestions</p>
+
+    	<p><a href="https://github.com/baliganikhil/crates">Fork</a></p>
+    </p>
+  </div>
+  <div class="modal-footer">
+  </div>
+</div>
+
+<script type="text/javascript" src="/js/crates.js"></script>
+
+</body>
+</html>
