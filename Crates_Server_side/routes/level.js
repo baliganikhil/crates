@@ -45,7 +45,7 @@ exports.getLevelsOfReqDifficulty = (req, res) => {
 
 exports.saveLevel = (req, res) => {
     const levelMetadataJSON = req.body;
-    const createdBy = req.userId;
+    const createdBy = req.user.id;
     LevelService.
         saveLevel(levelMetadataJSON, createdBy).
         then((response) => {
@@ -60,7 +60,7 @@ exports.saveLevel = (req, res) => {
 exports.deleteLevel = (req, res) => {
     const game = req.params.game;
     const difficulty = req.params.difficulty;
-    const createdBy = req.userId;
+    const createdBy = req.user.id;
     const createdAt = req.params.createdAt;
     LevelService.
         deleteLevel(game, difficulty, createdBy, createdAt).

@@ -7,10 +7,15 @@ const compression = require('compression')
 const awsServerlessExpressMiddleware = require('aws-serverless-express/middleware')
 const app = express()
 const router = express.Router()
+const passport = require('passport')
+const FacebookStrategy = require('passport-facebook').Strategy
+const session = require('cookie-session')
+const cookieParser = require('cookie-parser')
+const config = require('./configuration/config')
+const LevelAPI = require('./routes/level')
+const loginAPI = require('./routes/login')
 
-const LevelAPI = require('./routes/level');
-
-app.set('view engine', 'pug')
+app.set('view engine', 'ejs')
 
 if (process.env.NODE_ENV === 'test') {
   // NOTE: aws-serverless-express uses this app for its integration tests
@@ -20,31 +25,68 @@ if (process.env.NODE_ENV === 'test') {
   router.use(compression())
 }
 
-router.use(cors())
+// Passport session setup.
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(user, done) {
+  done(null, user);
+});
+
+// Use the FacebookStrategy within Passport.
+passport.use(new FacebookStrategy({
+  clientID: config.facebook_api_key,
+  clientSecret:config.facebook_api_secret,
+  callbackURL: config.callback_url,
+  enableProof: true,
+  profileFields: ['id', 'displayName', 'photos', 'email']
+},
+
+function(accessToken, refreshToken, profile, done) {
+  profile.accessToken = accessToken;
+  profile.refreshToken = refreshToken;
+  return done(null, profile);
+}
+));
+
+router.use(cookieParser('mySecretKey'))
 router.use(bodyParser.json())
 router.use(bodyParser.urlencoded({ extended: true }))
+router.use(session({ secret: 'mySecretKey'}))
+router.use(passport.initialize())
+router.use(passport.session())
+router.use(cors())
 router.use(awsServerlessExpressMiddleware.eventContext())
 
 // NOTE: tests can't find the views directory without this
 app.set('views', path.join(__dirname, 'views'))
 
-router.get('/', (req, res) => {
-  res.render('index', {
-    apiUrl: req.apiGateway ? `https://${req.apiGateway.event.headers.Host}/${req.apiGateway.event.requestContext.stage}` : 'http://localhost:3000'
-  })
-})
+router.get('/', loginAPI.loadHomePage);
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope: ['email'] }, {session:'true'}));
+
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook', 
+  { successRedirect : '/',  
+    failureRedirect: '/login', 
+    failureFlash: 'Invalid username or password.' 
+  }),
+  loginAPI.redirectToHomePage);
+
+router.get('/logout', loginAPI.logout);
+
+router.get('/login', loginAPI.login);
 
 let authenticator = (req, res, next) => {
   console.log('I am in authenticator');
 
-  if (!req.headers['x-auth']) {
+  if (!req.isAuthenticated()) {
     res.status(401);
-    res.send('Unauthorised call!');
+    res.send({err: true, data: 'Unauthorised call!'});
     return;
   }
-  // TODO: Replace the hardcoded userId with actual userId
-  // Using FB login code
-  req.userId = 'bhavi';
+
   next();
 };
 

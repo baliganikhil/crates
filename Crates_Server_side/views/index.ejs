@@ -1,0 +1,93 @@
+<html>
+<head>
+<title>Crates</title>
+</head>
+<body>
+<h2>Hello, <%= user.displayName %>.</h2>
+<p>ID: <%= user.id %></p>
+
+<form>
+Enter the Request URL endpoint: <input type="text" name="urlEndpoint" value="/api/v1/levels/crates" size=75>
+<br/>
+<br/>
+POST Request Body: <input type="text" name="postRequestBody" value='{"game": "crates","levelMatrix": [[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,3,1,1,1,1,1,1,1],[1,1,1,1,4,1,2,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1],[1,1,1,1,1,1,1,1,1,1]], "difficulty": "medium","levelName": "Bhavi World"}' size=100>
+<br/>
+<br/>
+<select name="request">
+        <option>GET</option>
+        <option>POST</option>
+        <option>DELETE</option>
+</select>
+<br/>
+</form>
+
+<button id="submit-request">Submit Request</button>
+
+<form action="/logout">
+    <br/>
+    <input type="submit" value="Log out" />
+</form>
+
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<script>
+    $("#submit-request").click(function() {
+        let values = $('form').serializeArray();
+        let urlEndpoint = values[0].value;
+        let postRequestBody = JSON.parse(values[1].value);
+        let request = values[2].value;
+        
+        if (request === "GET")  {
+            $.ajax({
+                url: urlEndpoint,
+                type: 'GET',
+                dataType: 'json',
+                timeout: 5000,
+                success: function(result) {
+                    console.log('GET Request Completed successfully and response data: \n', result);
+                },
+                error: function(result) {
+                    console.log('Error occured in GET request');
+                },
+                complete: function() {
+                    console.log('done');
+                }
+            })
+        }
+        else if (request === "POST")  {
+            $.ajax({
+                url: urlEndpoint,
+                type: 'POST',
+                dataType: 'json',
+                data: postRequestBody,
+                timeout: 5000,
+                success: function(result) {
+                    console.log('POST Request Completed successfully and response data: \n', result);
+                },
+                error: function(result) {
+                    console.log('Error occured in POST request');
+                },
+                complete: function() {
+                    console.log('complete');
+                }
+            })
+        }
+        else if (request === "DELETE")  {
+            $.ajax({
+                url: urlEndpoint,
+                type: 'DELETE',
+                timeout: 5000,
+                success: function(result) {
+                    console.log('DELETE Request completed successsfully and response data: \n', result);
+                },
+                error: function(result) {
+                    console.log('Error occured in DELETE request');
+                },
+                complete: function() {
+                    console.log('complete');
+                }
+            })
+        }
+    });
+</script>
+</body>
+</html>
